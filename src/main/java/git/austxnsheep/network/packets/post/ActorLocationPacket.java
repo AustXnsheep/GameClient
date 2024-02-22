@@ -1,13 +1,14 @@
 package git.austxnsheep.network.packets.post;
 
-import git.austxnsheep.worlddata.simplestates.SimplePhysicsInstance;
+import git.austxnsheep.worlddata.simplestates.SimpleEntity;
+import git.austxnsheep.worlddata.simplestates.simpleentities.SimplePhysicsInstance;
 
 import java.util.List;
 
 public class ActorLocationPacket {
-    public List<SimplePhysicsInstance> objectsData;
+    public List<SimpleEntity> objectsData;
     public ActorLocationPacket() {}
-    public ActorLocationPacket(List<SimplePhysicsInstance> objectsData) {
+    public ActorLocationPacket(List<SimpleEntity> objectsData) {
         this.objectsData = objectsData;
     }
 }

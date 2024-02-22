@@ -46,8 +46,10 @@ public class Player extends Entity implements ObjectFactory {
             updateFromPose(hmdPose);
 
         }
+
          */
     }
+        /*
 
     private void updateFromPose(TrackedDevicePose hmdPose) {
         position.set(convertPosition(hmdPose));
@@ -108,4 +110,5 @@ public class Player extends Entity implements ObjectFactory {
             modelBatch.end();
         }
     }
+         */
 }

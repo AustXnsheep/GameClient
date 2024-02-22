@@ -2,18 +2,21 @@ package git.austxnsheep;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.loaders.ModelLoader;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.g3d.Environment;
+import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
+import com.badlogic.gdx.graphics.g3d.loader.G3dModelLoader;
 import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
+import com.badlogic.gdx.utils.JsonReader;
 import git.austxnsheep.network.GameClient;
 import git.austxnsheep.network.listeners.ioprocessors.IOListeners;
-import git.austxnsheep.network.packets.post.JoinPacket;
 import git.austxnsheep.network.packets.post.PlayerUpdatePacket;
 import git.austxnsheep.network.packets.requests.WorldRequestPacket;
 import git.austxnsheep.worlddata.World;
@@ -33,10 +36,8 @@ public class Main extends ApplicationAdapter {
     public static void main(String[] args) {
         new LwjglApplication(new Main(), "Ripple", 800, 600);
         client = new GameClient();
-        client.connect("64.23.178.23", 54555, 54777);
+        client.connect("127.0.0.1", 54555, 54777);
 
-        JoinPacket data = new JoinPacket();
-        client.sendData(data);
         WorldRequestPacket worldRequestPacket = new WorldRequestPacket();
         client.sendData(worldRequestPacket);
     }
@@ -67,7 +68,6 @@ public class Main extends ApplicationAdapter {
         environment.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.4f, 0.4f, 0.4f, 1f)); // Soft white light
 
         environment.add(new DirectionalLight().set(0.8f, 0.8f, 0.8f, -1f, -0.8f, -0.2f)); // Adjust color and direction as needed
-
 
         // Add a directional light to simulate sunlight
         // Initialize your PhysicsModelInstances and add them to instances array

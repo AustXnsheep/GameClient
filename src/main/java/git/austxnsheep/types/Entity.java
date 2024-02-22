@@ -1,21 +1,21 @@
 package git.austxnsheep.types;
 
+import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
-import org.lwjgl.util.vector.Quaternion;
 
 public abstract class Entity {
     protected Vector3 position;
-    protected Quaternion orientation;
+    protected com.badlogic.gdx.math.Quaternion orientation;
     protected int health;
     protected int defense;
     protected EntityType type;
 
     public Entity() {
         position = new Vector3();
-        orientation = new Quaternion();
+        orientation = new com.badlogic.gdx.math.Quaternion();
         health = 100;
         defense = 0;
-        type = EntityType.NOODLEMAN;
+        type = EntityType.PLAYER;
     }
 
     public int getHealth() {
@@ -46,6 +46,9 @@ public abstract class Entity {
     }
     public Vector3 getPosition() {
         return this.position;
+    }
+    public com.badlogic.gdx.math.Quaternion getOrientation() {
+        return orientation;
     }
     public void setOrientation(Quaternion newor) {
         this.orientation = newor;

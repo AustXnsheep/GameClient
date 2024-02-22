@@ -8,7 +8,7 @@ import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
-import git.austxnsheep.worlddata.simplestates.SimplePhysicsInstance;
+import git.austxnsheep.worlddata.simplestates.simpleentities.SimplePhysicsInstance;
 
 public interface ObjectConversionFactory {
     ModelBuilder modelBuilder = new ModelBuilder();

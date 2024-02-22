@@ -1,12 +1,12 @@
-package git.austxnsheep.worlddata.simplestates;
+package git.austxnsheep.worlddata.simplestates.simpleentities;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
+import git.austxnsheep.worlddata.simplestates.SimpleEntity;
 
-public class SimplePhysicsInstance {
-    private Vector3 position;
-    private Quaternion rotation;
+public class SimplePhysicsInstance extends SimpleEntity {
+    private Vector3 deltaDirection;
     private boolean isStatic;
     private Color color;
     private float width, height, depth; // Dimensions for box shapes
@@ -15,9 +15,8 @@ public class SimplePhysicsInstance {
 
     // Constructor including Quaternion for rotation
     public SimplePhysicsInstance() {}
-    public SimplePhysicsInstance(Vector3 position, Quaternion rotation, boolean isStatic, Color color, float width, float height, float depth, float mass, int state) {
-        this.position = position;
-        this.rotation = rotation;
+    public SimplePhysicsInstance(Vector3 position, Vector3 deltaDirection, Quaternion rotation, boolean isStatic, Color color, float width, float height, float depth, float mass, int state) {
+        super(position, rotation);
         this.isStatic = isStatic;
         this.color = color;
         this.width = width;
@@ -25,6 +24,7 @@ public class SimplePhysicsInstance {
         this.depth = depth;
         this.mass = mass;
         this.state = state;
+        this.deltaDirection = deltaDirection;
     }
 
     // Getters and Setters
@@ -38,22 +38,6 @@ public class SimplePhysicsInstance {
 
     public float getDepth() {
         return depth;
-    }
-
-    public Vector3 getPosition() {
-        return position;
-    }
-
-    public void setPosition(Vector3 position) {
-        this.position = position;
-    }
-
-    public Quaternion getRotation() {
-        return rotation;
-    }
-
-    public void setRotation(Quaternion rotation) {
-        this.rotation = rotation;
     }
 
     public boolean isStatic() {
