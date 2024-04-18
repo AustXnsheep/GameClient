@@ -5,8 +5,11 @@ import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
 import git.austxnsheep.worlddata.simplestates.SimpleEntity;
 
+import java.util.Random;
+import java.util.UUID;
+
 public class SimplePhysicsInstance extends SimpleEntity {
-    private Vector3 deltaDirection;
+    public Vector3 deltaDirection;
     private boolean isStatic;
     private Color color;
     private float width, height, depth; // Dimensions for box shapes
@@ -14,8 +17,12 @@ public class SimplePhysicsInstance extends SimpleEntity {
     private int state;
 
     // Constructor including Quaternion for rotation
-    public SimplePhysicsInstance() {}
-    public SimplePhysicsInstance(Vector3 position, Vector3 deltaDirection, Quaternion rotation, boolean isStatic, Color color, float width, float height, float depth, float mass, int state) {
+
+    public SimplePhysicsInstance() {
+        super();
+    }
+
+    public SimplePhysicsInstance(Vector3 position, Vector3 deltaDirection, Quaternion rotation, boolean isStatic, Color color, float width, float height, float depth, float mass, int state, UUID uuid) {
         super(position, rotation);
         this.isStatic = isStatic;
         this.color = color;
@@ -25,6 +32,7 @@ public class SimplePhysicsInstance extends SimpleEntity {
         this.mass = mass;
         this.state = state;
         this.deltaDirection = deltaDirection;
+        setUuid(uuid);
     }
 
     // Getters and Setters
@@ -67,7 +75,12 @@ public class SimplePhysicsInstance extends SimpleEntity {
     public void getState(int state) {
         this.state = state;
     }
+
     public int getState() {
         return this.state;
+    }
+
+    public Vector3 multiply(float scalar) {
+        return new Vector3(getPosition().x * scalar, getPosition().y * scalar, getPosition().z * scalar);
     }
 }

@@ -6,13 +6,14 @@
 
     <groupId>git.austxnsheep</groupId>
     <artifactId>GameClient</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.2-SNAPSHOT</version>
     <build>
         <plugins>
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <version>3.6.0</version> <!-- Use the latest version available -->
                 <configuration>
+                    <argLine>--add-opens java.base/java.util=ALL-UNNAMED</argLine>
                     <archive>
                         <manifest>
                             <mainClass>git.austxnsheep.Main</mainClass>
@@ -38,7 +39,7 @@
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <libgdx.version>1.10.0</libgdx.version>
+        <libgdx.version>1.12.1</libgdx.version>
         <lwjgl.version>3.3.3</lwjgl.version>
         <lwjgl.natives>natives-windows</lwjgl.natives>
     </properties>
@@ -47,7 +48,22 @@
             <id>clojars</id>
             <url>http://clojars.org/repo/</url>
         </repository>
+        <repository>
+            <id>lwjgl</id>
+            <url>https://repo.lwjgl.org/release/</url>
+        </repository>
     </repositories>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.lwjgl</groupId>
+                <artifactId>lwjgl-bom</artifactId>
+                <version>${lwjgl.version}</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
     <dependencies>
         <!-- Json Data -->
         <dependency>
@@ -71,7 +87,7 @@
         <!-- Backend for LWJGL (Desktop) -->
         <dependency>
             <groupId>com.badlogicgames.gdx</groupId>
-            <artifactId>gdx-backend-lwjgl</artifactId>
+            <artifactId>gdx-backend-lwjgl3</artifactId>
             <version>${libgdx.version}</version>
         </dependency>
 
@@ -83,17 +99,30 @@
             <classifier>natives-desktop</classifier>
         </dependency>
 
-        <!--OpenVR VR library-->
-        <dependency>
-            <groupId>org.lwjgl</groupId>
-            <artifactId>lwjgl-openvr</artifactId>
-            <version>3.3.3</version>
-        </dependency>
-        <!-- LWJGL Core (Required) -->
+        <!-- LWJGL Core -->
         <dependency>
             <groupId>org.lwjgl</groupId>
             <artifactId>lwjgl</artifactId>
-            <version>3.3.3</version>
+            <version>${lwjgl.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.lwjgl</groupId>
+            <artifactId>lwjgl</artifactId>
+            <version>${lwjgl.version}</version>
+            <classifier>${lwjgl.natives}</classifier>
+        </dependency>
+
+        <!-- LWJGL OpenVR -->
+        <dependency>
+            <groupId>org.lwjgl</groupId>
+            <artifactId>lwjgl-openvr</artifactId>
+            <version>${lwjgl.version}</version>
+            <classifier>${lwjgl.natives}</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.lwjgl</groupId>
+            <artifactId>lwjgl-openvr</artifactId>
+            <version>${lwjgl.version}</version>
         </dependency>
     </dependencies>
 

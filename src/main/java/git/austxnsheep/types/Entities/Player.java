@@ -15,7 +15,6 @@ import git.austxnsheep.worlddata.objectdata.ObjectFactory;
 import org.lwjgl.openvr.HmdMatrix34;
 import org.lwjgl.openvr.TrackedDevicePose;
 import org.lwjgl.openvr.VR;
-import org.lwjgl.util.vector.Quaternion;
 
 import java.nio.FloatBuffer;
 

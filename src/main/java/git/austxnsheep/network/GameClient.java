@@ -6,6 +6,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.Client;
 import git.austxnsheep.Main;
+import git.austxnsheep.network.UUIDSerializer.UUIDSerializer;
 import git.austxnsheep.network.listeners.ClientListener;
 import git.austxnsheep.network.packets.post.*;
 import git.austxnsheep.network.packets.requests.PushBlockPacket;
@@ -18,6 +19,7 @@ import git.austxnsheep.worlddata.simplestates.simpleentities.SimplePhysicsInstan
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.UUID;
 
 public class GameClient {
     private Client client;
@@ -48,7 +50,7 @@ public class GameClient {
         kryo.register(SimpleEntity.class);
         kryo.register(SimpleBlockMan.class);
         kryo.register(SimplePhysicsInstance.class);
-
+        kryo.register(UUID.class, new UUIDSerializer());
         // Register other classes as needed
     }
 
