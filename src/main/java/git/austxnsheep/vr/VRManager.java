@@ -30,6 +30,7 @@ public class VRManager {
             IntBuffer peError = stack.mallocInt(1);
             int token = VR_InitInternal(peError, VR.EVRApplicationType_VRApplication_Scene);
             if (peError.get(0) == 0) {
+                vrInitialized = true;
                 OpenVR.create(token);
 
                 System.out.println("Model Number : " + VRSystem_GetStringTrackedDeviceProperty(

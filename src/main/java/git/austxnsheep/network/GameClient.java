@@ -2,6 +2,7 @@ package git.austxnsheep.network;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Quaternion;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.Client;
@@ -10,6 +11,7 @@ import git.austxnsheep.network.UUIDSerializer.UUIDSerializer;
 import git.austxnsheep.network.listeners.ClientListener;
 import git.austxnsheep.network.packets.post.*;
 import git.austxnsheep.network.packets.requests.PushBlockPacket;
+import git.austxnsheep.network.packets.requests.SoundPacket;
 import git.austxnsheep.network.packets.requests.WorldRequestPacket;
 import git.austxnsheep.types.Player;
 import git.austxnsheep.worlddata.objecttypes.Actor;
@@ -50,6 +52,8 @@ public class GameClient {
         kryo.register(SimpleEntity.class);
         kryo.register(SimpleBlockMan.class);
         kryo.register(SimplePhysicsInstance.class);
+        kryo.register(SoundPacket.class);
+        kryo.register(Vector2.class);
         kryo.register(UUID.class, new UUIDSerializer());
         // Register other classes as needed
     }
@@ -58,11 +62,8 @@ public class GameClient {
         try {
             client.connect(5000, address, tcpPort, udpPort);
             System.out.println("Connected to server at " + address + ":" + tcpPort);
-
-            Main.getLogger().info("Test1 passed");
         } catch (IOException e) {
             System.err.println("Could not connect to server: " + e.getMessage());
-            e.printStackTrace();
         }
     }
 
