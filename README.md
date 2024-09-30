@@ -6,12 +6,19 @@ This is a simple client that using Lwjgl, Log4j, Jackson, LibGDX, and other libr
 This client can join the server I've setup using DigitalOcean, and lets you see other players active in it.
 
 Controls:
+
 Mouse: controls where you're looking
+
 W: go forwards
+
 S: go backwards
+
 F: Pushes all blocks on the server upwards, is visible for every other player.
-LEFT_ALT: Unlock cursor
+
+LEFT_ALT (This is going to be replaced with when you're in a GUI): Unlock cursor
+
 F3: Debug Mode
+
 F11: FullScreen
 
 
