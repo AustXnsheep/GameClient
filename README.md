@@ -10,6 +10,10 @@ Mouse: controls where you're looking
 W: go forwards
 S: go backwards
 F: Pushes all blocks on the server upwards, is visible for every other player.
+LEFT_ALT: Unlock cursor
+F3: Debug Mode
+F11: FullScreen
+
 
 This whole project was more for a learning experience but I am planning to use this to make a vr game.
 
