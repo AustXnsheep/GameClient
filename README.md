@@ -1,9 +1,9 @@
 **Game Client for my future multi-player vr projects**
 
 How does this work?
-This is a simple client that using Lwjgl, Log4j, Jackson, LibGDX, and lwjgl-openvr
+This is a simple client that using Lwjgl, Log4j, Jackson, LibGDX, and other libraries.
 
-This client can join the server I've setup using DigitalOcean, and lets you see other "players" active in it.
+This client can join the server I've setup using DigitalOcean, and lets you see other players active in it.
 
 Controls:
 Mouse: controls where you're looking
