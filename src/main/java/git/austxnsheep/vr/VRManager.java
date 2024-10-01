@@ -1,10 +1,8 @@
 package git.austxnsheep.vr;
 
-import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
-import git.austxnsheep.Main;
 import git.austxnsheep.vr.tracking.VRTracking;
 import git.austxnsheep.vr.types.EyePositions;
 import git.austxnsheep.vr.utils.VRUtils;
@@ -24,6 +22,10 @@ public class VRManager {
     public static int recommendedWidth;
     public static int recommendedHeight;
     public static void initializeOpenVR() {
+        if (!VR_IsRuntimeInstalled()) {
+            System.err.println("VR Runtime not installed or not running.");
+            return;
+        }
         try {
             MemoryStack stack = MemoryStack.create().push();
             // Initialize OpenVR
@@ -41,8 +43,6 @@ public class VRManager {
                 IntBuffer w = stack.mallocInt(1);
                 IntBuffer h = stack.mallocInt(1);
                 VRSystem_GetRecommendedRenderTargetSize(w, h);
-                System.out.println("Recommended width : " + w.get(0));
-                System.out.println("Recommended height: " + h.get(0));
 
             } else {
                 System.out.println("INIT ERROR SYMBOL: " + VR_GetVRInitErrorAsSymbol(peError.get(0)));
@@ -53,8 +53,8 @@ public class VRManager {
             setupRenderTargetSize();
 
         } catch (Exception e) {
-            System.err.println("Failed to initialize OpenVR: " + e.getMessage());
             // Handle initialization failure
+            System.err.println("Failed to initialize OpenVR: " + e.getMessage());
         }
     }
     public static void shutdown() {

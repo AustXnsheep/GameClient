@@ -9,6 +9,7 @@ public class SimpleEntity {
     public Vector3 location;
     public Quaternion orientation;
     public UUID uuid;
+    public String textureID;
     public SimpleEntity() {
         this.location = new Vector3(0, 0, 0);
         this.orientation = new Quaternion();
@@ -16,6 +17,11 @@ public class SimpleEntity {
     public SimpleEntity(Vector3 location, Quaternion orientation) {
         this.location = location;
         this.orientation = orientation;
+    }
+    public SimpleEntity(Vector3 location, Quaternion orientation, String textureID) {
+        this.location = location;
+        this.orientation = orientation;
+        this.textureID = textureID;
     }
     public Vector3 getPosition() {
         return location;

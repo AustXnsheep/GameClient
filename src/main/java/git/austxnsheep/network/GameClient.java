@@ -36,6 +36,7 @@ public class GameClient {
     }
 
     private void registerClasses(Kryo kryo) {
+        kryo.register(JoinResponsePacket.class);
         kryo.register(JoinPacket.class);
         kryo.register(Player.class);
         kryo.register(TestPacket.class);

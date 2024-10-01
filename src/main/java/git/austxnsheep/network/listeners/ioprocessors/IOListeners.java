@@ -5,6 +5,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.math.Vector3;
 import git.austxnsheep.Main;
+import git.austxnsheep.Settings;
 import git.austxnsheep.network.packets.requests.PushBlockPacket;
 
 import static git.austxnsheep.Main.camera;
@@ -15,9 +16,23 @@ public class IOListeners implements InputProcessor {
     @Override
     public boolean keyDown(int keycode) {
         if (keycode == Input.Keys.F) {
-            Main.getLogger().info("Pressed F!");
             Main.client.sendData(new PushBlockPacket());
             return true;
+        } else if (keycode == Input.Keys.F3) {
+            Settings.debugMode = !Settings.debugMode;
+        } else if (keycode == Input.Keys.F11) {
+            // Toggle between fullscreen and windowed mode
+            if (Gdx.graphics.isFullscreen()) {
+                Gdx.graphics.setWindowedMode(800, 600); // example windowed mode size
+            } else {
+                Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
+            }
+        } else if (keycode == Input.Keys.ALT_LEFT) {
+            if (Gdx.input.isCursorCatched()) {
+                Gdx.input.setCursorCatched(false);
+            } else {
+                Gdx.input.setCursorCatched(true);
+            }
         }
         return false;
     }

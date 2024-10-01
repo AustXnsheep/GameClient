@@ -16,7 +16,7 @@ public class SoundStack {
         this.soundPosition = initialSoundPosition;
         this.listenerPosition = listenerPosition;
         this.maxHearingDistance = maxHearingDistance;
-        this.soundId = sound.play(0.0f);
+        this.soundId = sound.play(1.0f);
         updateSound();
     }
 

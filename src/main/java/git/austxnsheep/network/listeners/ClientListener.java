@@ -13,6 +13,7 @@ import com.esotericsoftware.kryonet.Listener;
 import git.austxnsheep.Main;
 import git.austxnsheep.Sound.SoundStack;
 import git.austxnsheep.network.packets.post.ActorLocationPacket;
+import git.austxnsheep.network.packets.post.JoinResponsePacket;
 import git.austxnsheep.network.packets.post.WorldDataPacket;
 import git.austxnsheep.network.packets.requests.SoundPacket;
 import git.austxnsheep.worlddata.World;
@@ -31,6 +32,11 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class ClientListener extends Listener implements ObjectConversionFactory {
+    private final ModelLoader<ModelLoader.ModelParameters> modelLoader = new G3dModelLoader(new JsonReader());
+    private final Model defaultModel = modelLoader.loadModel(Gdx.files.internal("Assets/sword.G3DJ"));
+
+    public static ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+
     @Override
     public void received(Connection connection, Object object) {
         if (object instanceof WorldDataPacket packet) {
@@ -42,9 +48,7 @@ public class ClientListener extends Listener implements ObjectConversionFactory 
                     World.staticInstances.add(modelInstance);
                     // Assuming you have a mechanism to add this modelInstance to your rendering list
                 }
-                ModelLoader loader = new G3dModelLoader(new JsonReader());
-                Model model = loader.loadModel(Gdx.files.internal("Assets/sword.G3DJ"));
-                ModelInstance instance = new ModelInstance(model);
+                ModelInstance instance = new ModelInstance(defaultModel);
                 World.staticInstances.add(instance);
             });
         } else if (object instanceof ActorLocationPacket packet) {
@@ -55,30 +59,25 @@ public class ClientListener extends Listener implements ObjectConversionFactory 
                 Map<UUID, ModelStack> instancesMap = World.dynamicInstances.stream()
                         .collect(Collectors.toMap(modelStack -> modelStack.ID, Function.identity()));
                 for (SimpleEntity instance : packet.objectsData) {
-                    Main.getLogger().info("Actor Packet Size:" + packet.objectsData.size());
                     if (connection != null) {
                         UUID uuid = instance.getUuid();
                         ModelStack modelStack = instancesMap.get(uuid);
-                            if (instance instanceof SimplePhysicsInstance simplePhysicsInstance) {
-                                // Simplified logging and condition checks
-                                if (modelStack == null) {
-                                    modelStack = createModelInstanceFromSimple(simplePhysicsInstance);
-                                    World.dynamicInstances.add(modelStack);
-                                } else {
-                                    modelStack.transform.set(instance.getPosition(), instance.getRotation());
-                                }
-
-                                // Interpolation the existing entities
-                                interpolateWorld(packet);
+                        if (instance instanceof SimplePhysicsInstance simplePhysicsInstance) {
+                            // Simplified logging and condition checks
+                            if (modelStack == null) {
+                                modelStack = createModelInstanceFromSimple(simplePhysicsInstance);
+                                World.dynamicInstances.add(modelStack);
+                            } else {
+                                modelStack.transform.set(instance.getPosition(), instance.getRotation());
+                            }
+                            // Interpolation of the existing entities
+                            // Disabled until I fix whatever the problem is.
+                            //interpolateWorld(packet);
 
                             } else if (instance instanceof SimpleBlockMan blockMan) {
                                 if (modelStack == null) {
-                                    // Model loading optimization: Consider caching models outside of this loop
-                                    ModelLoader loader = new G3dModelLoader(new JsonReader());
-                                    Model model = loader.loadModel(Gdx.files.internal("Assets/sword.G3DJ"));
-                                    ModelInstance modelInstance = new ModelInstance(model);
-                                    modelStack = new ModelStack(modelInstance, null);
-                                    modelStack.ID = uuid;
+                                    ModelInstance modelInstance = new ModelInstance(defaultModel);
+                                    modelStack = new ModelStack(modelInstance, uuid);
                                     synchronized (World.dynamicInstances) {
                                         World.dynamicInstances.add(modelStack);
                                     }
@@ -88,36 +87,62 @@ public class ClientListener extends Listener implements ObjectConversionFactory 
                                 modelStack.transform.setTranslation(blockMan.location);
                                 modelStack.transform.set(blockMan.orientation);
                             }
-
-                            // Schedule the task immediately or with a slight delay if necessary
                         }
                     }
             });
         } else if (object instanceof SoundPacket packet) {
             //Sound sound, Vector2 initialSoundPosition, Vector2 listenerPosition, float maxHearingDistance
-            /*
-            if (!Main.developerMode) {
-                new SoundStack(Main.assetManager.get(Main.assetRoot + packet.soundID), packet.initialSoundPosition, new Vector2(Main.leftEye.position.x, Main.leftEye.position.y), packet.maxHearingDistance);
+            Main.getLogger().info("Attempting to play sound.");
+            if (Main.developerMode) {
+                new SoundStack(Main.assetManager.get(Main.assetRoot + packet.soundID), packet.initialSoundPosition, new Vector2(Main.camera.position.x, Main.camera.position.y), packet.maxHearingDistance);
             } else {
-                new SoundStack(Main.assetManager.get(Main.assetRoot + packet.soundID), packet.initialSoundPosition, new Vector2(Main.camera.position.x, Main.camera.position.y), packet.maxHearingDistance);}
+                new SoundStack(Main.assetManager.get(Main.assetRoot + packet.soundID), packet.initialSoundPosition, new Vector2(Main.leftEye.position.x, Main.leftEye.position.y), packet.maxHearingDistance);
+            }
 
-             */
+        } else if (object instanceof JoinResponsePacket packet) {
+            Main.serverIP = packet.serverIP;
+            Main.softwareType = packet.softwareType;
+            Main.isConnectedToServer = true;
         }
     }
     public static void interpolateWorld(ActorLocationPacket packet) {
-        ScheduledExecutorService executor = Executors.newScheduledThreadPool(Math.min(packet.objectsData.size(), Runtime.getRuntime().availableProcessors()));
-        Runnable task = () -> {
-            for (ModelStack modelStack : World.dynamicInstances) {
-                Vector3 currentPosition = new Vector3();
-                modelStack.transform.getTranslation(currentPosition);
-                Vector3 targetPosition = modelStack.velocity;
-                float alpha = 0.006f;
-                Vector3 interpolatedPosition = currentPosition.lerp(targetPosition, alpha);
-                modelStack.transform.setTranslation(interpolatedPosition);
+        scheduler.schedule(() -> {
+            synchronized (World.dynamicInstances) { // Thread-safe access
+                for (ModelStack modelStack : World.dynamicInstances) {
+                    if (containsUUID(modelStack.ID, packet)) {
+                        if (modelStack.velocity != null) {
+                            Vector3 currentPosition = new Vector3();
+                            modelStack.transform.getTranslation(currentPosition);
+                            Vector3 targetPosition = modelStack.velocity;
+                            float alpha = 0.006f;
+                            currentPosition.lerp(targetPosition, alpha);  // currentPosition is now the interpolated position
+                            modelStack.transform.setTranslation(currentPosition);
+                        } else {
+                            Main.getLogger().severe("Failed to interpolate: Velocity is null.");
+                        }
+                    } else {
+                        Main.getLogger().severe("Failed to interpolate an object: UUID, Object, or packet could be null.");
+                    }
+                }
             }
-        };
-        executor.schedule(task, 6, TimeUnit.MILLISECONDS);
-        executor.shutdown();
+        }, 6, TimeUnit.MILLISECONDS);
     }
-
+    public static void shutdownScheduler() {
+        scheduler.shutdown();
+        try {
+            if (!scheduler.awaitTermination(800, TimeUnit.MILLISECONDS)) {
+                scheduler.shutdownNow();
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    }
+    public static boolean containsUUID(UUID uuid, ActorLocationPacket packet) {
+        for (SimpleEntity entity : packet.objectsData) {
+            if (entity.getUuid() == uuid) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
